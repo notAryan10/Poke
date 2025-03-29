@@ -19,7 +19,7 @@
 
 ## Contact
 
-Your Name - [Aryan Verma](https://www.linkedin.com/in/aryan-verma100806)
+LinkedIn - [Aryan Verma](https://www.linkedin.com/in/aryan-verma100806)
 
 Project Link: [Deployed Link](https://poke-battle-neon.vercel.app/)
 
