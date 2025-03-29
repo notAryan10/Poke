@@ -200,7 +200,6 @@ button:disabled {
   transition: width 0.5s ease;
 }
 
-/* Loading Animation */
 .loading {
   display: flex;
   flex-direction: column;
@@ -237,7 +236,6 @@ button:disabled {
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-/* Winner Announcement */
 .winner-announcement {
   position: fixed;
   top: 0;
@@ -273,7 +271,6 @@ button:disabled {
   to { transform: scale(1); opacity: 1; }
 }
 
-/* Button Styles */
 .battle-button, .new-pokemon-button {
   padding: 12px 30px;
   font-size: 18px;
@@ -329,7 +326,6 @@ button:disabled {
   background-color: #cc0000;
 }
 
-/* Add some glow effects */
 @keyframes glow {
   0% { box-shadow: 0 0 5px rgba(255, 68, 68, 0.3); }
   50% { box-shadow: 0 0 20px rgba(255, 68, 68, 0.5); }
@@ -340,7 +336,6 @@ button:disabled {
   animation: glow 2s infinite;
 }
 
-/* Add this to index.css or at the top of App.css */
 body {
   margin: 0;
   padding: 0;
@@ -350,7 +345,7 @@ body {
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-/* Scrollbar styling */
+
 ::-webkit-scrollbar {
   width: 8px;
 }

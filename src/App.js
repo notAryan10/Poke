@@ -62,8 +62,10 @@ function App() {
     const damage1 = Math.max(0, pokemon1.attack - pokemon2.defense);
     const damage2 = Math.max(0, pokemon2.attack - pokemon1.defense);
     
-    hp2 -= damage1;
-    hp1 -= damage2;
+    setTimeout(() => {
+      hp2 -= damage1;
+      hp1 -= damage2;
+    }, 2000);
 
     if (hp1 > hp2) {
       setWinner(pokemon1.name);
