@@ -19,9 +19,9 @@
 
 ## Contact
 
-Your Name - [Aryan Verma](https://twitter.com/yourtwitter)
+Your Name - [Aryan Verma](https://www.linkedin.com/in/aryan-verma100806)
 
-Project Link: [https://github.com/yourusername/pokemon-battle-simulator](https://github.com/yourusername/pokemon-battle-simulator)
+Project Link: [Deployed Link](https://poke-battle-neon.vercel.app/)
 
 ---
 
