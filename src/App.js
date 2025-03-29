@@ -73,50 +73,23 @@ function App() {
     const damage1 = Math.max(0, pokemon1.attack - pokemon2.defense);
     const damage2 = Math.max(0, pokemon2.attack - pokemon1.defense);
     
-    // Animate the battle sequence
+    // Calculate results immediately
+    hp2 -= damage1;
+    hp1 -= damage2;
+
+    if (hp1 > hp2) {
+      setWinner(pokemon1.name);
+    } else if (hp2 > hp1) {
+      setWinner(pokemon2.name);
+    } else {
+      setWinner("It's a tie!");
+    }
+    
+    setIsLoading(false);
+
+    // Clear winner after 2 seconds
     setTimeout(() => {
-      document.querySelector('.pokemon1-img').classList.add('attack-right');
-      setTimeout(() => {
-        document.querySelector('.pokemon2-img').classList.add('damage');
-        document.querySelector('.pokemon2-hp').classList.add('hp-decrease');
-      }, 400);
-    }, 0);
-
-    setTimeout(() => {
-      document.querySelector('.pokemon2-img').classList.add('attack-left');
-      setTimeout(() => {
-        document.querySelector('.pokemon1-img').classList.add('damage');
-        document.querySelector('.pokemon1-hp').classList.add('hp-decrease');
-      }, 400);
-    }, 1000);
-
-    // Show result after animations
-    setTimeout(() => {
-      hp2 -= damage1;
-      hp1 -= damage2;
-
-      if (hp1 > hp2) {
-        setWinner(pokemon1.name);
-      } else if (hp2 > hp1) {
-        setWinner(pokemon2.name);
-      } else {
-        setWinner("It's a tie!");
-      }
-
-      // Reset animations
-      document.querySelectorAll('.pokemon1-img, .pokemon2-img').forEach(el => {
-        el.classList.remove('attack-right', 'attack-left', 'damage');
-      });
-      document.querySelectorAll('.pokemon1-hp, .pokemon2-hp').forEach(el => {
-        el.classList.remove('hp-decrease');
-      });
-      
-      setIsLoading(false);
-
-      // Clear winner after 2 seconds
-      setTimeout(() => {
-        setWinner(null);
-      }, 2000);
+      setWinner(null);
     }, 2000);
   };
 
@@ -191,9 +164,7 @@ function App() {
                 </div>
               )}
 
-              <div className="vs">
-                <div className="vs-text">VS</div>
-              </div>
+              <div className="vs">VS</div>
 
               {pokemon2 && (
                 <div className="pokemon-card pokemon2">
