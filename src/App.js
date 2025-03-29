@@ -128,7 +128,6 @@ function App() {
                     alt={pokemon1.name} 
                     className="pokemon1-img"
                     onError={(e) => {
-                      console.log('Image failed to load:', pokemon1.image);
                       e.target.src = fallbackImage;
                     }}
                   />
@@ -173,7 +172,6 @@ function App() {
                     alt={pokemon2.name} 
                     className="pokemon2-img"
                     onError={(e) => {
-                      console.log('Image failed to load:', pokemon2.image);
                       e.target.src = fallbackImage;
                     }}
                   />
