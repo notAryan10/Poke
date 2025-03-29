@@ -16,20 +16,14 @@ function App() {
       setIsLoading(true);
       setWinner(null);
       
-      // Generate random IDs between 1 and 898
       const id1 = Math.floor(Math.random() * 898) + 1;
       const id2 = Math.floor(Math.random() * 898) + 1;
 
-      console.log('Fetching Pokemon with IDs:', id1, id2); // Debug log
-
-      // Fetch both Pokemon in parallel
       const [response1, response2] = await Promise.all([
         axios.get(`https://pokeapi.co/api/v2/pokemon/${id1}`),
         axios.get(`https://pokeapi.co/api/v2/pokemon/${id2}`)
       ]);
 
-      console.log('Pokemon 1 data:', response1.data); // Debug log
-      console.log('Pokemon 2 data:', response2.data); // Debug log
 
       const pokemon1Data = {
         name: response1.data.name,
@@ -47,15 +41,11 @@ function App() {
         defense: response2.data.stats[2].base_stat
       };
 
-      console.log('Processed Pokemon 1:', pokemon1Data); // Debug log
-      console.log('Processed Pokemon 2:', pokemon2Data); // Debug log
-
       setPokemon1(pokemon1Data);
       setPokemon2(pokemon2Data);
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching Pokemon:', error);
-      // Show error to user
       alert('Error loading Pokemon. Please try again.');
       setIsLoading(false);
     }
@@ -69,11 +59,9 @@ function App() {
     let hp1 = pokemon1.hp;
     let hp2 = pokemon2.hp;
     
-    // Calculate damage
     const damage1 = Math.max(0, pokemon1.attack - pokemon2.defense);
     const damage2 = Math.max(0, pokemon2.attack - pokemon1.defense);
     
-    // Calculate results immediately
     hp2 -= damage1;
     hp1 -= damage2;
 
@@ -87,7 +75,6 @@ function App() {
     
     setIsLoading(false);
 
-    // Clear winner after 2 seconds
     setTimeout(() => {
       setWinner(null);
     }, 2000);
