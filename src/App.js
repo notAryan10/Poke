@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import PokemonCard from './components/PokemonCard';
+import BattleControls from './components/BattleControls';
 import './App.css';
 
 function App() {
@@ -16,37 +18,29 @@ function App() {
       setIsLoading(true);
       setWinner(null);
       
-      const id1 = Math.floor(Math.random() * 898) + 1;
-      const id2 = Math.floor(Math.random() * 898) + 1;
+      const ids = [
+        Math.floor(Math.random() * 898) + 1,
+        Math.floor(Math.random() * 898) + 1
+      ];
 
-      const [response1, response2] = await Promise.all([
-        axios.get(`https://pokeapi.co/api/v2/pokemon/${id1}`),
-        axios.get(`https://pokeapi.co/api/v2/pokemon/${id2}`)
-      ]);
+      const responses = await Promise.all(
+        ids.map(id => axios.get(`https://pokeapi.co/api/v2/pokemon/${id}`))
+      );
 
+      const pokemonData = responses.map(response => ({
+        name: response.data.name,
+        image: response.data.sprites.front_default,
+        hp: response.data.stats[0].base_stat,
+        attack: response.data.stats[1].base_stat,
+        defense: response.data.stats[2].base_stat
+      }));
 
-      const pokemon1Data = {
-        name: response1.data.name,
-        image: response1.data.sprites.front_default,
-        hp: response1.data.stats[0].base_stat,
-        attack: response1.data.stats[1].base_stat,
-        defense: response1.data.stats[2].base_stat
-      };
-
-      const pokemon2Data = {
-        name: response2.data.name,
-        image: response2.data.sprites.front_default,
-        hp: response2.data.stats[0].base_stat,
-        attack: response2.data.stats[1].base_stat,
-        defense: response2.data.stats[2].base_stat
-      };
-
-      setPokemon1(pokemon1Data);
-      setPokemon2(pokemon2Data);
-      setIsLoading(false);
+      setPokemon1(pokemonData[0]);
+      setPokemon2(pokemonData[1]);
     } catch (error) {
       console.error('Error fetching Pokemon:', error);
-      alert('Error loading Pokemon. Please try again.');
+      setError('Error loading Pokemon. Please try again.');
+    } finally {
       setIsLoading(false);
     }
   };
@@ -56,175 +50,77 @@ function App() {
     
     setIsLoading(true);
     
-    let hp1 = pokemon1.hp;
-    let hp2 = pokemon2.hp;
-    
     const damage1 = Math.max(0, pokemon1.attack - pokemon2.defense);
     const damage2 = Math.max(0, pokemon2.attack - pokemon1.defense);
     
-    setTimeout(() => {
-      hp2 -= damage1;
-      hp1 -= damage2;
-    }, 2000);
+    const hp1 = pokemon1.hp - damage2;
+    const hp2 = pokemon2.hp - damage1;
 
-    if (hp1 > hp2) {
-      setWinner(pokemon1.name);
-    } else if (hp2 > hp1) {
-      setWinner(pokemon2.name);
-    } else {
-      setWinner("It's a tie!");
-    }
+    setWinner(
+      hp1 > hp2 ? pokemon1.name :
+      hp2 > hp1 ? pokemon2.name :
+      "It's a tie!"
+    );
     
     setIsLoading(false);
-
-    setTimeout(() => {
-      setWinner(null);
-    }, 2000);
+    setTimeout(() => setWinner(null), 2000);
   };
 
   useEffect(() => {
     fetchRandomPokemon();
   }, []);
 
+  if (error) {
+    return (
+      <div className="error-message">
+        <h2>Something went wrong</h2>
+        <p>{error}</p>
+        <button onClick={() => {
+          setError(null);
+          fetchRandomPokemon();
+        }}>
+          Try Again
+        </button>
+      </div>
+    );
+  }
+
+  if (isLoading && !pokemon1) {
+    return (
+      <div className="loading">
+        <div className="pokeball"></div>
+        <p>Loading Pokemon...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="App">
       <h1 className="title">Pokemon Battle Simulator</h1>
-      
-      {error ? (
-        <div className="error-message">
-          <h2>Something went wrong</h2>
-          <p>{error}</p>
-          <button onClick={() => {
-            setError(null);
-            fetchRandomPokemon();
-          }}>
-            Try Again
-          </button>
-        </div>
-      ) : isLoading && !pokemon1 ? (
-        <div className="loading">
-          <div className="pokeball"></div>
-          <p>Loading Pokemon...</p>
-        </div>
-      ) : (
-        <div className="battle-container">
-          <div className="battle-arena">
-            <div className="pokemon-container">
-              {pokemon1 && (
-                <div className="pokemon-card pokemon1">
-                  <div className="stats-banner">
-                    <h2>{pokemon1.name}</h2>
-                    <div className="hp-bar">
-                      <div className="hp-label">HP:</div>
-                      <div className="hp-wrapper">
-                        <div 
-                          className="hp-fill pokemon1-hp"
-                          style={{width: `${(pokemon1.hp / 255) * 100}%`}}
-                        ></div>
-                      </div>
-                      <div className="hp-text">{pokemon1.hp}</div>
-                    </div>
-                  </div>
-                  <img 
-                    src={pokemon1.image} 
-                    alt={pokemon1.name} 
-                    className="pokemon1-img"
-                    onError={(e) => {
-                      e.target.src = fallbackImage;
-                    }}
-                  />
-                  <div className="stats">
-                    <div className="stat">
-                      <span className="stat-label">Attack:</span>
-                      <div className="stat-bar">
-                        <div style={{width: `${(pokemon1.attack / 255) * 100}%`}}></div>
-                      </div>
-                      <span>{pokemon1.attack}</span>
-                    </div>
-                    <div className="stat">
-                      <span className="stat-label">Defense:</span>
-                      <div className="stat-bar">
-                        <div style={{width: `${(pokemon1.defense / 255) * 100}%`}}></div>
-                      </div>
-                      <span>{pokemon1.defense}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <div className="vs">VS</div>
-
-              {pokemon2 && (
-                <div className="pokemon-card pokemon2">
-                  <div className="stats-banner">
-                    <h2>{pokemon2.name}</h2>
-                    <div className="hp-bar">
-                      <div className="hp-label">HP:</div>
-                      <div className="hp-wrapper">
-                        <div 
-                          className="hp-fill pokemon2-hp"
-                          style={{width: `${(pokemon2.hp / 255) * 100}%`}}
-                        ></div>
-                      </div>
-                      <div className="hp-text">{pokemon2.hp}</div>
-                    </div>
-                  </div>
-                  <img 
-                    src={pokemon2.image} 
-                    alt={pokemon2.name} 
-                    className="pokemon2-img"
-                    onError={(e) => {
-                      e.target.src = fallbackImage;
-                    }}
-                  />
-                  <div className="stats">
-                    <div className="stat">
-                      <span className="stat-label">Attack:</span>
-                      <div className="stat-bar">
-                        <div style={{width: `${(pokemon2.attack / 255) * 100}%`}}></div>
-                      </div>
-                      <span>{pokemon2.attack}</span>
-                    </div>
-                    <div className="stat">
-                      <span className="stat-label">Defense:</span>
-                      <div className="stat-bar">
-                        <div style={{width: `${(pokemon2.defense / 255) * 100}%`}}></div>
-                      </div>
-                      <span>{pokemon2.defense}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="controls">
-              <button 
-                className={`battle-button ${isLoading ? 'disabled' : ''}`}
-                onClick={simulateBattle} 
-                disabled={!pokemon1 || !pokemon2 || isLoading}
-              >
-                Start Battle
-              </button>
-              <button 
-                className="new-pokemon-button"
-                onClick={fetchRandomPokemon}
-                disabled={isLoading}
-              >
-                New Pokemon
-              </button>
-            </div>
-
-            {winner && (
-              <div className="winner-announcement">
-                <div className="winner-content">
-                  <h2>Winner: {winner}</h2>
-                  <div className="winner-effects"></div>
-                </div>
-              </div>
-            )}
+      <div className="battle-container">
+        <div className="battle-arena">
+          <div className="pokemon-container">
+            {pokemon1 && <PokemonCard pokemon={pokemon1} position={1} fallbackImage={fallbackImage} />}
+            <div className="vs">VS</div>
+            {pokemon2 && <PokemonCard pokemon={pokemon2} position={2} fallbackImage={fallbackImage} />}
           </div>
+
+          <BattleControls 
+            onBattle={simulateBattle}
+            onNewPokemon={fetchRandomPokemon}
+            isLoading={isLoading}
+          />
+
+          {winner && (
+            <div className="winner-announcement">
+              <div className="winner-content">
+                <h2>Winner: {winner}</h2>
+                <div className="winner-effects"></div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 }
